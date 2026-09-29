@@ -1,7 +1,9 @@
 // este archivo tendra la configuracion principal de express.
 
 //importamos el express
+//importamos el express
 const express = require("express");
+const estudiantesRoutes = require("./routes/estudiantes.routes");
 
 // creamos la aplicacion
 const app = express();

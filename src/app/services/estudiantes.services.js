@@ -1,12 +1,3 @@
-let estudiantes = [
-    {
-        id: 1,
-        nombre: "Juan",
-        correo: "juan@gmail.com",
-        edad: 20
-    }
-];
-
 //Busca un estudiante por su id.
 const obtenerTodos = () => {
     return estudiantes;

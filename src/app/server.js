@@ -1,6 +1,7 @@
 //Este archivo sera el punto de entrada del servidor.
 // su unica responsabilidad es levantar el servidor.
 
+require("dotenv").config();
 
 // estamos importando la aplicacion que configuramos en otro archivo.
 const app = require("./app");
