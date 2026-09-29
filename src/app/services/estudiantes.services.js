@@ -1,8 +1,21 @@
-//Busca un estudiante por su id.
-const obtenerTodos = () => {
-    return estudiantes;
-}
+const supabase = require('../config/supabase.config');
 
+//Esta funcion devuekve todos los estudiantes.
+const obtenerTodos = async () => {
+    const { data, error } = await supabase
+          .from("estudiantes")
+          .select("*");
+
+    if (error) {
+         throw error;
+    }
+
+    return data;
+
+};
+
+
+//Busca un estudiante por su id.
 const obtenerPorId = (id) => {
     return estudiantes.find(estudiante => estudiante.id === id);
 }

@@ -2,10 +2,18 @@
 const estudiantesService = require('../services/estudiantes.services');
 
 
-const obtenerEstudiantes = (req, res) => {
-    const estudiantes = estudiantesService.obtenerTodos();
+const obtenerEstudiantes = async(req, res) => {
+    try {
+         const estudiantes =
+         await estudiantesService.obtenerTodos();
 
-    res.json(estudiantes);
+         res.status(200).json(estudiantes);
+    } catch{ (error){
+        res.estatus(500).json({
+            error: "Error al obtener los estudiantes"
+        });
+    }
+
 };
 
 const obtenerEstudiantePorId = (req, res) => {
