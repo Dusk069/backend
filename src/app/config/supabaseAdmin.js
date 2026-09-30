@@ -1,10 +1,17 @@
-const { createClient } = require('@supabase/supabase-js');
+const { createClient } = require("@supabase/supabase-js");
 
-const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SECRET_KEY
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+    throw new Error(
+        "Faltan SUPABASE_URL o SUPABASE_KEY en el archivo .env"
+    );
+}
+
+const supabaseAdmin = createClient(
+    supabaseUrl,
+    supabaseKey
 );
 
-console.log("supabase", process.env.SUPABASE_URL);
-
-module.exports = supabase;
+module.exports = supabaseAdmin;

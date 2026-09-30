@@ -1,86 +1,140 @@
+const estudiantesService = require("../services/estudiantes.services");
 
-const estudiantesService = require('../services/estudiantes.services');
-
-
-const obtenerEstudiantes = async(req, res) => {
+// Obtener todos los estudiantes
+const obtenerEstudiantes = async (req, res) => {
     try {
-         const estudiantes =
-         await estudiantesService.obtenerTodos();
+        const estudiantes = await estudiantesService.obtenerTodos();
 
-         res.status(200).json(estudiantes);
-    } catch{ (error){
-        res.estatus(500).json({
+        res.status(200).json(estudiantes);
+    } catch (error) {
+        console.error("Error al obtener estudiantes:", error);
+
+        res.status(500).json({
             error: "Error al obtener los estudiantes"
         });
     }
-
 };
 
-const obtenerEstudiantePorId = (req, res) => {
-    const id = parseInt(req.params.id);
+// Obtener estudiante por ID
+const obtenerEstudiantePorId = async (req, res) => {
+    try {
+        const id = Number(req.params.id);
 
-    const estudiante = estudiantesService.obtenerPorId(id);
+        if (Number.isNaN(id)) {
+            return res.status(400).json({
+                error: "El ID debe ser un número"
+            });
+        }
 
-    if (!estudiante) {
-        return res.status(404).json({
-            error: "Estudiante no encontrado"
-        });
-    }        
-}
+        const estudiante = await estudiantesService.obtenerPorId(id);
 
-const crearEstudiante = (req, res) => {
-    const {nombre, correo, edad} = req.body;
+        if (!estudiante) {
+            return res.status(404).json({
+                error: "Estudiante no encontrado"
+            });
+        }
 
-    if (!nombre || !correo || !edad) {
-        return res.status(400).json({
-            error: "Faltan datos obligatorios"
-        });
-    }
+        res.status(200).json(estudiante);
+    } catch (error) {
+        console.error("Error al obtener estudiante:", error);
 
-    const nuevoEstudiante = estudiantesService.crear({
-        nombre, 
-        correo, 
-        edad
-    });
-
-    res.status(201).json(nuevoEstudiante);
-}
-
-const actualizarEstudiante = (req, res) => {
-    const id = Number(req.params.id);
-
-    const datos = req.body;
-
-    const estudianteActualizado = estudiantesService.actualizar(id, datos);
-
-    if (!estudianteActualizado) {   
-        return res.status(404).json({
-            error: "Estudiante no encontrado"
+        res.status(500).json({
+            error: "Error al obtener el estudiante"
         });
     }
-
-    res.status(200).json({
-        mensaje: "Estudiante actualizado correctamente",
-        estudiante: estudianteActualizado
-    });
 };
 
-const eliminarEstudiante = (req, res) => {
-    const id = Number(req.params.id);
+// Crear estudiante
+const crearEstudiante = async (req, res) => {
+    try {
+        const { nombre, correo, edad } = req.body;
 
-    const estudianteEliminado = estudiantesService.eliminar(id);
+        if (!nombre || !correo || edad === undefined) {
+            return res.status(400).json({
+                error: "Faltan datos obligatorios"
+            });
+        }
 
-    if (!estudianteEliminado) {
-        return res.status(404).json({
-            error: "Estudiante no encontrado"
+        const nuevoEstudiante = await estudiantesService.crear({
+            nombre,
+            correo,
+            edad
+        });
+
+        res.status(201).json(nuevoEstudiante);
+    } catch (error) {
+        console.error("Error al crear estudiante:", error);
+
+        res.status(500).json({
+            error: "Error al crear el estudiante"
         });
     }
-    
-    res.status(200).json({
-        mensaje: "Estudiante eliminado correctamente",
-        estudiante: estudianteEliminado
-    });
+};
 
+// Actualizar estudiante
+const actualizarEstudiante = async (req, res) => {
+    try {
+        const id = Number(req.params.id);
+
+        if (Number.isNaN(id)) {
+            return res.status(400).json({
+                error: "El ID debe ser un número"
+            });
+        }
+
+        const estudianteActualizado =
+            await estudiantesService.actualizar(id, req.body);
+
+        if (!estudianteActualizado) {
+            return res.status(404).json({
+                error: "Estudiante no encontrado"
+            });
+        }
+
+        res.status(200).json({
+            mensaje: "Estudiante actualizado correctamente",
+            estudiante: estudianteActualizado
+        });
+    } catch (error) {
+        console.error("Error al actualizar estudiante:", error);
+
+        res.status(500).json({
+            error: "Error al actualizar el estudiante"
+        });
+    }
+};
+
+// Eliminar estudiante
+const eliminarEstudiante = async (req, res) => {
+    try {
+        const id = Number(req.params.id);
+
+        if (Number.isNaN(id)) {
+            return res.status(400).json({
+                error: "El ID debe ser un número"
+            });
+        }
+
+        const estudianteEliminado =
+            await estudiantesService.eliminar(id);
+
+        if (!estudianteEliminado) {
+            return res.status(404).json({
+                error: "Estudiante no encontrado"
+            });
+        }
+
+        res.status(200).json({
+            mensaje: "Estudiante eliminado correctamente",
+            estudiante: estudianteEliminado
+        });
+    } catch (error) {
+        console.error("Error al eliminar estudiante:", error);
+
+        res.status(500).json({
+            error: "Error al eliminar el estudiante"
+        });
+    }
 };
 
 module.exports = {

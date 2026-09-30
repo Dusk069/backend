@@ -1,81 +1,92 @@
-const supabase = require('../config/supabase.config');
+const supabase = require("../config/supabaseAdmin");
 
-//Esta funcion devuekve todos los estudiantes.
+// Obtener todos los estudiantes
 const obtenerTodos = async () => {
     const { data, error } = await supabase
-          .from("estudiantes")
-          .select("*");
+        .from("estudiantes")
+        .select("*");
 
     if (error) {
-         throw error;
+        throw error;
     }
 
     return data;
-
 };
 
+// Obtener un estudiante por ID
+const obtenerPorId = async (id) => {
+    const { data, error } = await supabase
+        .from("estudiantes")
+        .select("*")
+        .eq("id", id)
+        .single();
 
-//Busca un estudiante por su id.
-const obtenerPorId = (id) => {
-    return estudiantes.find(estudiante => estudiante.id === id);
-}
+    if (error) {
+        if (error.code === "PGRST116") {
+            return null;
+        }
 
-/* Nota: 
- El signo = (Asignacion)  sirve para guardar un valor dentro de una variable.
- Los signoa == (Igualdad debil ) sirve para comparar dos valores.
-Los tres signos === (Igualdad estricta) sirve para comparar el valor y el tipo de dato al mismo tiempo.
-*/
-
-//Crear un nuevo estudiante copiando los datos recibidos.
-const crear = (datos) => {
-    const nuevoEstudiante = {
-        id: estudiantes.length + 1,
-        ...datos
-    };
-
-    estudiantes.push(nuevoEstudiante);
-
-    return nuevoEstudiante;
-};
-
-const actualizar = (id, datos) => {
-    const indice = estudiantes.findIndex(
-        (estudiante) => estudiante.id === id
-    );
-
-    if (indice !== -1) {
-        return null;
+        throw error;
     }
 
-    estudiantes[indice] = {
-        ...estudiantes[indice],
-        ...datos,
-        id
-    };
-
-    return estudiantes[indice];
+    return data;
 };
 
-const eliminar = (id) => {
-    const indice = estudiantes.findIndex(
-        (estudiante) => estudiante.id === id
-    );
-    if (indice !== -1) {
-        return null;
+// Crear un estudiante
+const crear = async (datos) => {
+    const { data, error } = await supabase
+        .from("estudiantes")
+        .insert([datos])
+        .select()
+        .single();
+
+    if (error) {
+        throw error;
     }
-    
-    const estudianteEliminado = estudiantes[indice];
-    
 
-    //Eliminar un elemento del arreglo comenzado,
-    //Desde determinada posicion.
-    estudiantes.splice(indice, 1);
-    
-    return estudianteEliminado;
+    return data;
 };
 
-//Si crean una funcion pero olvidan exportarla.
-//Despues
+// Actualizar un estudiante
+const actualizar = async (id, datos) => {
+    const { data, error } = await supabase
+        .from("estudiantes")
+        .update(datos)
+        .eq("id", id)
+        .select()
+        .single();
+
+    if (error) {
+        if (error.code === "PGRST116") {
+            return null;
+        }
+
+        throw error;
+    }
+
+    return data;
+};
+
+// Eliminar un estudiante
+const eliminar = async (id) => {
+    const { data, error } = await supabase
+        .from("estudiantes")
+        .delete()
+        .eq("id", id)
+        .select()
+        .single();
+
+    if (error) {
+        if (error.code === "PGRST116") {
+            return null;
+        }
+
+        throw error;
+    }
+
+    return data;
+};
+
 module.exports = {
     obtenerTodos,
     obtenerPorId,
